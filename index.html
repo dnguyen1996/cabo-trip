@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>We love Denny Co</title>
+<style>
+  :root {
+    --bg: #fbf7f0; --card: #ffffff; --ink: #1d2a2f; --muted: #66767c;
+    --line: #e6ded0; --accent: #0e7c86; --in: #1f9d55; --maybe: #e0a100; --pass: #c8473b;
+    --warn-bg: #fff3b0; --warn-ink: #5c4500;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #11191c; --card: #1a2529; --ink: #eef3f4; --muted: #9bb0b6;
+      --line: #2a383d; --accent: #3cc1cc; --warn-bg: #4a3d00; --warn-ink: #ffe27a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.45 -apple-system, system-ui, "Segoe UI", sans-serif; }
+  header { padding: 20px 16px 8px; max-width: 720px; margin: 0 auto; }
+  h1 { margin: 0; font-size: 26px; }
+  .sub { color: var(--muted); margin: 4px 0 12px; }
+  .bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .who { background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+         padding: 8px 14px; font-weight: 600; }
+  button { font: inherit; cursor: pointer; }
+  .link { background: none; border: 0; color: var(--accent); padding: 8px 4px; text-decoration: underline; }
+  main { max-width: 720px; margin: 0 auto; padding: 0 16px 80px; }
+  .banner { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px;
+            padding: 10px 12px; margin: 8px 0; font-size: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+          padding: 14px; margin: 12px 0; }
+  .card h2 { margin: 0 0 6px; font-size: 19px; }
+  .num { color: var(--accent); }
+  .card h2 a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 8px; }
+  .chip { background: var(--bg); border: 1px solid var(--line); border-radius: 999px;
+          padding: 2px 10px; font-size: 13px; }
+  .chip.over { background: var(--warn-bg); color: var(--warn-ink); border-color: transparent; }
+  .addr { font-size: 14px; color: var(--muted); }
+  .addr a { color: var(--muted); }
+  .why { margin: 8px 0; }
+  .verify { background: var(--warn-bg); color: var(--warn-ink); border-radius: 8px;
+            padding: 6px 10px; font-size: 13px; margin: 8px 0; }
+  .votes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+  .vbtn { border: 2px solid var(--line); background: var(--card); color: var(--ink);
+          border-radius: 12px; padding: 12px 4px; font-weight: 600; min-height: 48px; }
+  .vbtn[data-c="in"].on { background: var(--in); border-color: var(--in); color: #fff; }
+  .vbtn[data-c="pass"].on { background: var(--pass); border-color: var(--pass); color: #fff; }
+  .tally { font-size: 14px; color: var(--muted); margin-top: 8px; }
+  details summary { cursor: pointer; color: var(--accent); }
+  .names { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+  dialog { border: 0; border-radius: 16px; padding: 20px; max-width: 420px; width: calc(100% - 32px);
+           background: var(--card); color: var(--ink); }
+  .names-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .names-grid button { border: 2px solid var(--line); background: var(--bg); color: var(--ink);
+                       border-radius: 12px; padding: 14px 6px; font-weight: 600; min-height: 48px; }
+  .names-grid button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  dialog::backdrop { background: rgba(0,0,0,.5); }
+  input[type=text] { width: 100%; font: inherit; padding: 12px; border-radius: 10px;
+                     border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  .primary { background: var(--accent); color: #fff; border: 0; border-radius: 10px;
+             padding: 12px 18px; font-weight: 600; margin-top: 12px; }
+  .tabs { display: flex; gap: 8px; max-width: 720px; margin: 0 auto; padding: 8px 16px; }
+  .tab { flex: 1; border: 2px solid var(--line); background: var(--card); color: var(--ink);
+         border-radius: 12px; padding: 12px; font-weight: 600; }
+  .tab.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  table.results { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.results th, table.results td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+  table.results th.n, table.results td.n { text-align: center; width: 48px; }
+  table.results td.rank { color: var(--muted); width: 28px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>We love Denny Co</h1>
+  <p class="sub">Cabo · Jan 29-31 · tap In or Pass on each idea. You can change your vote any time.</p>
+  <div class="bar">
+    <span class="who" id="who"></span>
+    <button class="link" id="switch">Not you?</button>
+  </div>
+  <div id="banner"></div>
+</header>
+<nav class="tabs">
+  <button class="tab on" id="tabVote" type="button">Vote</button>
+  <button class="tab" id="tabBoard" type="button">Leaderboard</button>
+</nav>
+<main>
+  <div id="votePane">
+    <div id="list"></div>
+  </div>
+  <div id="boardPane" hidden>
+    <section class="card"><h2 style="margin-top:0">Leaderboard</h2><div id="resultsFull"></div></section>
+  </div>
+</main>
+
+<dialog id="nameDialog">
+  <h2 style="margin-top:0">Who are you?</h2>
+  <p class="sub">Tap your name. You can switch any time.</p>
+  <div class="names-grid" id="nameGrid"></div>
+</dialog>
+
+<script src="config.js?v=1791054695"></script>
+<script>
+const CHOICES = { in: "In", pass: "Pass" };
+const CFG = window.CABO_CONFIG || {};
+const LIVE = Boolean(CFG.supabaseUrl && CFG.supabaseKey);
+const SHOW_NOTES = new URLSearchParams(location.search).has("notes");
+const $ = (id) => document.getElementById(id);
+
+let activities = [];
+let events = [];   // every vote ever cast, oldest first
+let me = localStorage.getItem("caboVoter") || "";
+
+// ---- storage: Supabase when configured, otherwise this phone only (preview) ----
+async function loadEvents() {
+  if (!LIVE) return JSON.parse(localStorage.getItem("caboPreviewEvents") || "[]");
+  const r = await fetch(`${CFG.supabaseUrl}/rest/v1/vote_events?select=voter,activity_id,choice,created_at&order=created_at.asc&limit=10000`,
+    { headers: { apikey: CFG.supabaseKey, Authorization: `Bearer ${CFG.supabaseKey}` } });
+  if (!r.ok) throw new Error("load failed");
+  return r.json();
+}
+async function saveEvent(ev) {
+  if (!LIVE) {
+    const all = JSON.parse(localStorage.getItem("caboPreviewEvents") || "[]");
+    all.push(ev);
+    localStorage.setItem("caboPreviewEvents", JSON.stringify(all));
+    return;
+  }
+  const r = await fetch(`${CFG.supabaseUrl}/rest/v1/vote_events`, {
+    method: "POST",
+    headers: { apikey: CFG.supabaseKey, Authorization: `Bearer ${CFG.supabaseKey}`,
+               "Content-Type": "application/json", Prefer: "return=minimal" },
+    body: JSON.stringify({ voter: ev.voter, activity_id: ev.activity_id, choice: ev.choice }),
+  });
+  if (!r.ok) throw new Error("save failed");
+}
+
+// ---- current vote = latest event per voter + activity ----
+function currentVotes() {
+  const latest = new Map();
+  for (const e of events) latest.set(`${e.voter.toLowerCase()}|${e.activity_id}`, e);
+  const byActivity = {};
+  for (const e of latest.values()) (byActivity[e.activity_id] ||= []).push(e);
+  return byActivity;
+}
+
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  for (const kid of kids) n.append(kid);
+  return n;
+}
+
+function render() {
+  $("who").textContent = me ? `Voting as ${me}` : "Not signed in";
+  $("banner").replaceChildren();
+  if (!LIVE) $("banner").append(el("div", { class: "banner" },
+    "Preview mode: votes are saved on this phone only until the shared voting database is connected."));
+
+  const votes = currentVotes();
+  const rows = activities.map((a, i) => {
+    const cur = votes[a.id] || [];
+    return { name: a.name, num: i + 1, inn: cur.filter((v) => v.choice === "in").length,
+             pass: cur.filter((v) => v.choice === "pass").length };
+  }).sort((x, y) => y.inn - x.inn || x.pass - y.pass || x.num - y.num);
+  const makeTable = () => el("table", { class: "results" },
+    el("tr", {}, el("th", {}, "#"), el("th", {}, "Idea"), el("th", { class: "n" }, "In"), el("th", { class: "n" }, "Pass")),
+    ...rows.map((r, i) => el("tr", {}, el("td", { class: "rank" }, String(i + 1)),
+      el("td", {}, `${r.name} (#${r.num})`), el("td", { class: "n" }, String(r.inn)), el("td", { class: "n" }, String(r.pass)))));
+  $("resultsFull").replaceChildren(makeTable());
+  const list = $("list");
+  list.replaceChildren();
+  for (const [i, a] of activities.entries()) {
+    const cur = votes[a.id] || [];
+    const mine = cur.find((v) => v.voter.toLowerCase() === me.toLowerCase());
+    const counts = { in: 0, pass: 0 };
+    cur.forEach((v) => { if (v.choice in counts) counts[v.choice]++; });
+
+    const chips = el("div", { class: "chips" },
+      el("span", { class: "chip" + (a.overBudget ? " over" : "") }, a.cost + " pp" + (a.overBudget ? " (over budget)" : "")),
+      el("span", { class: "chip" }, a.duration),
+      el("span", { class: "chip" }, a.category),
+      el("span", { class: "chip" }, `~${a.miles} mi from airport`));
+
+    const maps = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(a.address);
+    const route = "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent("Los Cabos International Airport (SJD)") + "&destination=" + encodeURIComponent(a.address);
+    const buttons = el("div", { class: "votes" }, ...Object.entries(CHOICES).map(([c, label]) =>
+      el("button", { class: "vbtn" + (mine && mine.choice === c ? " on" : ""), "data-c": c,
+                     onclick: () => vote(a.id, c) }, label)));
+
+    const names = Object.keys(CHOICES).map((c) => {
+      const who = cur.filter((v) => v.choice === c).map((v) => v.voter);
+      return who.length ? el("p", { class: "names" }, `${CHOICES[c]}: ${who.join(", ")}`) : null;
+    }).filter(Boolean);
+
+    list.append(el("section", { class: "card" },
+      el("h2", {}, el("span", { class: "num" }, `${i + 1}. `), el("a", { href: a.url, target: "_blank", rel: "noopener" }, a.name)),
+      chips,
+      el("div", { class: "addr" }, el("a", { href: maps, target: "_blank", rel: "noopener" }, a.address),
+        " · ", el("a", { href: route, target: "_blank", rel: "noopener" }, "Directions from airport")),
+      el("p", { class: "why" }, a.why),
+      (a.verify && SHOW_NOTES) ? el("div", { class: "verify" }, "Needs checking: " + a.verify) : "",
+      buttons,
+      el("div", { class: "tally" }, `${counts.in} in · ${counts.pass} pass`),
+      names.length ? el("details", {}, el("summary", {}, "Who voted"), ...names) : ""));
+  }
+}
+
+async function vote(activityId, choice) {
+  if (!me) return askName();
+  try {
+    await saveEvent({ voter: me, activity_id: activityId, choice, created_at: new Date().toISOString() });
+    events = await loadEvents();
+    render();
+  } catch (e) {
+    alert("Couldn't save that vote. Check your connection and try again.");
+  }
+}
+
+function askName() {
+  $("nameGrid").replaceChildren(...(CFG.voters || []).map((n) =>
+    el("button", { type: "button", class: n === me ? "on" : "", onclick: () => {
+      me = n; localStorage.setItem("caboVoter", me); $("nameDialog").close(); render();
+    } }, n)));
+  $("nameDialog").showModal();
+}
+$("switch").addEventListener("click", askName);
+function showTab(board) {
+  $("votePane").hidden = board; $("boardPane").hidden = !board;
+  $("tabVote").classList.toggle("on", !board); $("tabBoard").classList.toggle("on", board);
+}
+$("tabVote").addEventListener("click", () => showTab(false));
+$("tabBoard").addEventListener("click", () => showTab(true));
+
+(async function init() {
+  try {
+    const r = await fetch("activities.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error();
+    activities = await r.json();
+  } catch (e) {
+    $("banner").append(el("div", { class: "banner" }, "Couldn't load the activity list. Refresh the page."));
+    return;
+  }
+  try { events = await loadEvents(); } catch (e) {
+    $("banner").append(el("div", { class: "banner" }, "Couldn't load votes. Pull to refresh."));
+  }
+  if (me && CFG.voters && !CFG.voters.includes(me)) me = "";
+  render();
+  if (!me) askName();
+  if (LIVE) setInterval(async () => { try {
+    const fresh = await loadEvents();
+    if (fresh.length !== events.length) { events = fresh; render(); }
+  } catch (e) {} }, 30000);
+})();
+</script>
+</body>
+</html>
